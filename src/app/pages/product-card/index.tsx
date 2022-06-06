@@ -11,16 +11,26 @@ function ProductCard({ product }) {
       <image col={0} src={product.cover}></image>
       <stackLayout col={1}>
         <label className="text">{product.brandName}</label>
-        {product.discountedPrice > 0 ? (
-          <flexboxLayout>
-            <label>{product.price} DH</label>
-            <label>{product.discountedPrice} DH</label>
-          </flexboxLayout>
-        ) : (
-          <label className="far">{product.price}</label>
-        )}
+        <flexboxLayout marginTop={10}>
+          {product.discountedPrice > 0 &&
+          product.discountedPrice < product.price ? (
+            <>
+              <label
+                marginRight={10}
+                textDecoration="line-through"
+                color={colors.__gray}
+                className="price old"
+              >
+                {product.price} DH
+              </label>
+              <label className="price">{product.discountedPrice} DH</label>
+            </>
+          ) : (
+            <label className="price">{product.price} DH</label>
+          )}
+        </flexboxLayout>
         <RatingStars data={product}></RatingStars>
-        <AddItem {...product}></AddItem>
+        <AddItem options={{ product: product, type: "home" }}></AddItem>
       </stackLayout>
     </gridLayout>
   );

@@ -5,7 +5,7 @@ import { FrameNavigationProp } from "react-nativescript-navigation";
 import { StyleSheet } from "react-nativescript";
 import { MainStackParamList } from "./NavigationParamList";
 import { useContext, useEffect } from "react";
-import { CartContext, NavBarContext } from "../utils/context";
+import { AppContext, NavBarContext } from "../utils/context";
 
 type WelcomeScreenProps = {
   route: RouteProp<MainStackParamList, "Welcome">;
@@ -13,17 +13,20 @@ type WelcomeScreenProps = {
 };
 
 export function WelcomeScreen({ route, navigation }: WelcomeScreenProps) {
-  const { cart, setCart } = useContext(CartContext);
-  let { navBarOptions, setNavBarOptions } = useContext(NavBarContext);
+  const { appProps, setAppProps } = useContext(AppContext);
 
   return (
     <flexboxLayout
       onTap={() => {
-        try {
+        setAppProps({
+          ...appProps,
+          navBar: { show: true, navigation: navigation },
+        });
+        /*   try {
           setNavBarOptions({ show: true, navigation: navigation });
         } catch (error) {
           console.log(error);
-        }
+        } */
         navigation.navigate("Home");
       }}
       style={styles.container}

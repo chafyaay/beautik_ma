@@ -8,75 +8,10 @@ import { MainStackParamList } from "../../components/NavigationParamList";
 import { AppContext } from "../../utils/context";
 import { colors, app_styles } from "../../utils/app_styles";
 import { Icart } from "../../utils/props.interfaces";
-import { getItem } from "../../utils/storage";
 
 function NavBar({ options }) {
-  console.log("++++++", options);
-  const { navigation, qnte } = options;
-  const [_qnte, setQnte] = useState(0);
-  useEffect(() => {
-    console.log("====================================");
-    console.log(navigation);
-    console.log("====================================");
-  });
-  return (
-    <gridLayout
-      columns="auto,*,80"
-      onTap={() => {
-        console.log("================= ---- ===================");
-        console.log(navigation);
-        console.log("====================================");
-        /* 1. Navigate to the Details route with params */
-        navigation.navigate("CartDetails", {
-          itemId: 86,
-          otherParam: "anything you want here",
-        });
-      }}
-    >
-      <label
-        width={80}
-        height="80"
-        fontSize={30}
-        col={2}
-        text="&#xe901;"
-        className="icomoon"
-      ></label>
-      <label
-        textAlignment="center"
-        col={2}
-        borderRadius="30"
-        width={30}
-        height="30"
-        marginTop={-30}
-        marginRight="-30"
-        backgroundColor={colors.__primary}
-      >
-        {qnte}
-      </label>
-    </gridLayout>
-  );
-}
-
-function getQnte(cart: Icart[]) {
-  if (cart) {
-    if (cart.length > 0) {
-      return cart.reduce(
-        (a: any, b: any) => {
-          a.qnte += b.qnte;
-          return a;
-        },
-        { qnte: 0 }
-      ).qnte;
-    }
-  }
-
-  return 0;
-}
-
-function ____({ options }) {
   const appData = useContext(AppContext) as any;
   const [qnte, setQnte] = useState(0);
-
   const getQnte = (cart: Icart[]) => {
     if (cart) {
       if (cart.length > 0) {

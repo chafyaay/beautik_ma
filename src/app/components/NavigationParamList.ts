@@ -6,4 +6,5 @@ export type MainStackParamList = {
   CartDetails: {};
   RegisterScreen: {};
   LoginScreen: {};
+  onPageLoaded: {};
 };

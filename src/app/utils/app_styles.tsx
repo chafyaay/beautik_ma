@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-nativescript";
 
 export const colors = {
-  __primary: "hotpink",
+  __primary: "#F2C230",
   __secondary: "olive",
-  __default: "gray",
-  __disabled: "gray",
+  __default: "#D9D9D9",
+  __disabled: "#D9D9D9",
   __defaultText: "#333",
   __headingText: "black",
   __link: "#1492E6",
@@ -22,7 +22,8 @@ export const separators = {
   __v40: 40,
   __v50: 50,
 };
-export const globalStyles = StyleSheet.create({
+
+export const app_styles = StyleSheet.create({
   formControl: {
     borderWidth: 1,
     borderColor: "gray",
@@ -50,8 +51,8 @@ export const globalStyles = StyleSheet.create({
     padding: 10,
     margin: 10,
     marginBottom: 10,
-    color: "white",
-    letterSpacing: 1,
+    color: colors.___black,
+    letterSpacing: 0.1,
     borderWidth: 0,
     borderRadius: 3,
     fontFamily: "",
@@ -59,9 +60,10 @@ export const globalStyles = StyleSheet.create({
     textAlignment: "center",
     alignContent: "center",
     paddingTop: 12,
-    backgroundColor: "transparent",
+    width: "100%",
+    backgroundColor: colors.__default,
   },
-  primaryBtn: {
+  btn_primary: {
     backgroundColor: colors.__primary,
   },
   isEnabledBtn: {

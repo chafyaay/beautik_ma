@@ -2,7 +2,7 @@ import { RouteProp } from "@react-navigation/core";
 import * as React from "react";
 import { FrameNavigationProp } from "react-nativescript-navigation";
 import { MainStackParamList } from "../../components/NavigationParamList";
-import { globalStyles } from "../../utils/globalStyles";
+import { app_styles } from "../../utils/app_styles";
 
 type LoginScreenProps = {
   route: RouteProp<MainStackParamList, "LoginScreen">;
@@ -14,14 +14,14 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       <stackLayout padding={20}>
         <label className="form-label">Email/Numéro de Téléphone </label>
         <textField
-          style={globalStyles.formControl}
+          style={app_styles.formControl}
           className="form-control"
           formattedText={""}
         ></textField>
         <label className="form-label">Mot de passe </label>
         <textField
           className="form-control"
-          style={globalStyles.formControl}
+          style={app_styles.formControl}
           formattedText={""}
         ></textField>
         <label className="link" text="Mot de passe oublié"></label>

@@ -3,7 +3,12 @@ import { BaseNavigationContainer } from "@react-navigation/core";
 import { stackNavigatorFactory } from "react-nativescript-navigation";
 import { SecondaryScreen } from "./SecondaryScreen";
 import { ProductListScreen } from "../pages/product-list";
-import { CartContext, NavBarContext } from "../utils/context";
+import {
+  AppContext,
+  ModalContext,
+  NavBarContext,
+  NotificationContext,
+} from "../utils/context";
 import { useState, useEffect, useContext } from "react";
 import { Icart } from "../utils/props.interfaces";
 import { getItem } from "../utils/storage";
@@ -13,39 +18,30 @@ import { LoginScreen } from "../auth/login";
 import { HomeScreen } from "./HomeScreen";
 import { WelcomeScreen } from "./WelcomScreen";
 import NavBar from "../shared-ui/action-bar";
+import BottomSheetTest, { TopSheetModal } from "../shared-ui/modal";
+import { colors } from "../utils";
 
 const StackNavigator = stackNavigatorFactory();
 
 export const mainStackNavigator = () => {
-  const cartDetail: Icart[] = [];
-  const navBarOptionsProps = { show: false, navigation: null };
-  let [cart, setCart] = useState(cartDetail);
-  let [navBarOptions, setNavBarOptions] = useState(navBarOptionsProps);
-
-  useEffect(() => {
-    const storage = getItem("cart");
-    setCart(storage);
-  }, []);
+  const appDataProps = {
+    cart: getItem("cart"),
+    modal: false,
+    navBar: { show: false, navigation: null },
+  };
+  const notificationProps = { show: false };
+  let [appProps, setAppProps] = useState(appDataProps);
+  let [notification, setNotification] = useState(notificationProps);
 
   return (
     <page>
       <BaseNavigationContainer>
-        <CartContext.Provider value={{ cart, setCart }}>
-          <NavBarContext.Provider value={{ navBarOptions, setNavBarOptions }}>
-            <gridLayout rows="auto,*">
-              <>
-                <stackLayout row={0}>
-                  {navBarOptions.show ? (
-                    <NavBar options={navBarOptions.navigation}></NavBar>
-                  ) : (
-                    <></>
-                  )}
-                </stackLayout>
-              </>
-
-              <stackLayout row={1}>
+        <NotificationContext.Provider value={{ notification, setNotification }}>
+          <AppContext.Provider value={{ appProps, setAppProps }}>
+            <absoluteLayout row={1}>
+              <stackLayout left={0} top="0" width={"100%"} height="100%">
                 <StackNavigator.Navigator
-                  initialRouteName="LoginScreen"
+                  initialRouteName="Welcome"
                   screenOptions={{
                     headerStyle: {
                       backgroundColor: "black",
@@ -57,7 +53,6 @@ export const mainStackNavigator = () => {
                     name="Welcome"
                     component={WelcomeScreen}
                   />
-
                   <StackNavigator.Screen name="Home" component={HomeScreen} />
                   <StackNavigator.Screen
                     name="LoginScreen"
@@ -81,9 +76,16 @@ export const mainStackNavigator = () => {
                   />
                 </StackNavigator.Navigator>
               </stackLayout>
-            </gridLayout>
-          </NavBarContext.Provider>
-        </CartContext.Provider>
+              <>
+                {notification.show ? (
+                  <TopSheetModal options={1}></TopSheetModal>
+                ) : (
+                  <></>
+                )}
+              </>
+            </absoluteLayout>
+          </AppContext.Provider>
+        </NotificationContext.Provider>
       </BaseNavigationContainer>
     </page>
   );
