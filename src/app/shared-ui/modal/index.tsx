@@ -28,9 +28,6 @@ export default function BottomSheetTest({ options }) {
 
   React.useEffect(() => {
     setAppProps({ ...appProps, modal: false });
-    console.log("=============== appProps =====================");
-    console.log(appProps.modal);
-    console.log("====================================");
     appProps.modal ? handleOpenModal() : handleCloseModal();
   });
 
@@ -63,7 +60,7 @@ export default function BottomSheetTest({ options }) {
         <stackLayout ref={portalRef}>
           <button
             className="btn"
-            style={app_styles.primaryBtn}
+            style={app_styles.btn_primary}
             text="Consulter votre panier"
             onTap={() => {
               options?.navigation?.navigate("CartDetails");
@@ -87,16 +84,16 @@ export function TopSheetModal({ options }) {
   const { notification, setNotification } =
     React.useContext(NotificationContext);
   const containerRef = React.useRef(null);
+
   React.useEffect(() => {
     const view = containerRef.current!.nativeView as ViewWithBottomSheetBase;
-
-    console.log("============= ++++++++++ =======================");
-    console.log(view);
-
+    view.visibility = notification.show ? "visible" : "collapse";
     try {
       if (view) {
         view.originX = 0;
         view.translateY = -200;
+        view.backgroundColor = notification.bg;
+        view.left = 0.1;
         view
           .animate({
             translate: { x: 0, y: 0 },
@@ -111,21 +108,26 @@ export function TopSheetModal({ options }) {
                 curve: Enums.AnimationCurve.easeInOut,
                 delay: 1000,
               })
-              .then(() => setNotification({ show: false }));
+              .then(() => {
+                setNotification({ show: false });
+                // view.visibility = "collapse";
+              });
           });
       }
     } catch (error) {
-      console.log("================ err ====================", error);
+      console.log(error);
     }
-    console.log("====================================");
   }, [showModal]);
   return (
     <gridLayout
+      left={0}
+      top="0"
       columns="*,auto"
       ref={containerRef}
-      backgroundColor={"red"}
-      width="100%"
       padding={20}
+      width="100%"
+      height={80}
+      backgroundColor="orange"
     >
       <label
         verticalAlignment="middle"

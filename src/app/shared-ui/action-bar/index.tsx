@@ -11,21 +11,13 @@ import { Icart } from "../../utils/props.interfaces";
 import { getItem } from "../../utils/storage";
 
 function NavBar({ options }) {
-  console.log("++++++", options);
   const { navigation, qnte } = options;
   const [_qnte, setQnte] = useState(0);
-  useEffect(() => {
-    console.log("====================================");
-    console.log(navigation);
-    console.log("====================================");
-  });
+  useEffect(() => {});
   return (
     <gridLayout
       columns="auto,*,80"
       onTap={() => {
-        console.log("================= ---- ===================");
-        console.log(navigation);
-        console.log("====================================");
         /* 1. Navigate to the Details route with params */
         navigation.navigate("CartDetails", {
           itemId: 86,

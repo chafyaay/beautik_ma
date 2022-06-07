@@ -17,7 +17,6 @@ export async function getAllProducts(params: any) {
 }
 export async function getProductById(params: any) {
   const response = await API_CALL(params);
-  console.log("API", params);
 
   return response[0];
 }

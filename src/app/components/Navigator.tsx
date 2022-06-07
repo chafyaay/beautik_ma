@@ -19,7 +19,7 @@ import { HomeScreen } from "./HomeScreen";
 import { WelcomeScreen } from "./WelcomScreen";
 import NavBar from "../shared-ui/action-bar";
 import BottomSheetTest, { TopSheetModal } from "../shared-ui/modal";
-import { colors } from "../utils";
+import { TopSheetModalComponent } from "../shared-ui/modal/top-modal";
 
 const StackNavigator = stackNavigatorFactory();
 
@@ -29,7 +29,7 @@ export const mainStackNavigator = () => {
     modal: false,
     navBar: { show: false, navigation: null },
   };
-  const notificationProps = { show: false };
+  const notificationProps: { show: boolean; bg: any } = { show: false, bg: "" };
   let [appProps, setAppProps] = useState(appDataProps);
   let [notification, setNotification] = useState(notificationProps);
 
@@ -41,7 +41,7 @@ export const mainStackNavigator = () => {
             <absoluteLayout row={1}>
               <stackLayout left={0} top="0" width={"100%"} height="100%">
                 <StackNavigator.Navigator
-                  initialRouteName="Welcome"
+                  initialRouteName="CartDetails"
                   screenOptions={{
                     headerStyle: {
                       backgroundColor: "black",

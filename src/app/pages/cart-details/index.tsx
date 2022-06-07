@@ -9,7 +9,7 @@ import { SnackBarTest } from "../../shared-ui/modal/snack";
 import { AppContext } from "../../utils/context";
 import { colors, app_styles } from "../../utils/app_styles";
 import { getItem, LocalStorage } from "../../utils/storage";
-import ProductCard from "../product-card";
+import { AppCard } from "../product-card";
 
 type CartDetailsProps = {
   route: RouteProp<MainStackParamList, "CartDetails">;
@@ -37,81 +37,6 @@ export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
     setSubTotal(subtotal);
   };
   const _cart = getItem("cart") || [];
-  const CartDetailsCardtemplate = ({ product }) => {
-    const removeItem = () => {
-      const storage = new LocalStorage(product);
-      storage.removeItem(product.id);
-      setCart(getItem("cart"));
-    };
-
-    return (
-      <gridLayout
-        backgroundColor={"white"}
-        style={app_styles.card}
-        rows="auto,auto"
-        columns="auto,*"
-      >
-        <image
-          verticalAlignment="top"
-          col={0}
-          row="0"
-          src={product.cover}
-          width="100"
-          marginRight={10}
-        ></image>
-        <stackLayout col={1} row="0">
-          <label className="text" textWrap>
-            {product.brandName}
-          </label>
-          <flexboxLayout marginTop={10}>
-            {product.discountedPrice > 0 &&
-            product.discountedPrice < product.price ? (
-              <>
-                <label
-                  marginRight={10}
-                  textDecoration="line-through"
-                  color={colors.__disabled}
-                  className="price old"
-                >
-                  {product.price} DH
-                </label>
-                <label className="price">{product.discountedPrice} DH</label>
-              </>
-            ) : (
-              <label className="price">{product.price} DH</label>
-            )}
-          </flexboxLayout>
-          <stackLayout>
-            <label text={product.stock <= 0 ? "Epuisé" : ""}></label>
-          </stackLayout>
-        </stackLayout>
-        <flexboxLayout
-          marginTop={10}
-          borderTopColor={colors.__default}
-          borderTopWidth="1"
-          row={1}
-          colSpan={2}
-          flexWrap="wrap"
-          flexDirection="row"
-          justifyContent="space-between"
-        >
-          <stackLayout width={40}>
-            <button
-              onTap={() => removeItem()}
-              verticalAlignment="middle"
-              class="btn icomoon"
-              width={40}
-              text="&#xe9ac;"
-            ></button>
-          </stackLayout>
-
-          <stackLayout width="50%">
-            <AddItem options={{ product: product, type: "cart" }}></AddItem>
-          </stackLayout>
-        </flexboxLayout>
-      </gridLayout>
-    );
-  };
 
   React.useEffect(() => {
     setCart(getItem("cart"));
@@ -133,36 +58,41 @@ export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
       ></button>
     </stackLayout>
   );
+
+  {
+    /*      <button
+                    onTap={() => {
+                      //  navigation.navigate("Home", { cart: getItem("cart") });
+                      navigation.reset({
+                        index: 1,
+                        routes: [{ name: "Home" }],
+                      });
+                    }}
+                    text="Page d'accuil "
+                  ></button> */
+  }
   return (
-    <scrollView row={1}>
-      <stackLayout padding={20} height="100%" backgroundColor={"red"}>
-        {!!Cart ? (
-          Cart.length <= 0 ? (
-            <>{cartEmptytemplate()}</>
-          ) : (
-            Cart.map((_item) => (
-              <>
-                <CartDetailsCardtemplate
-                  product={_item.data}
-                ></CartDetailsCardtemplate>
-                <button
-                  onTap={() => {
-                    //  navigation.navigate("Home", { cart: getItem("cart") });
-                    navigation.reset({
-                      index: 1,
-                      routes: [{ name: "Home" }],
-                    });
-                  }}
-                  text="Page d'accuil "
-                ></button>
-              </>
-            ))
-          )
-        ) : (
+    <stackLayout backgroundColor={colors.___lightGray} height="100%">
+      {!!Cart ? (
+        Cart.length <= 0 ? (
           <>{cartEmptytemplate()}</>
-        )}
-      </stackLayout>
-    </scrollView>
+        ) : (
+          <scrollView row={1} height="100%">
+            <stackLayout padding={20}>
+              {Cart.map((_item) => (
+                <>
+                  <AppCard
+                    {...{ product: _item.data, cardType: "c" }}
+                  ></AppCard>
+                </>
+              ))}
+            </stackLayout>
+          </scrollView>
+        )
+      ) : (
+        <>{cartEmptytemplate()}</>
+      )}
+    </stackLayout>
   );
 };
 

@@ -13,6 +13,7 @@ export const colors = {
   ___orange: "hotpink",
   ___black: "#000303",
   ___lightGray: "#F7F7F7",
+  ___active: "#6CC04A",
 };
 
 export const separators = {
@@ -24,6 +25,12 @@ export const separators = {
 };
 
 export const app_styles = StyleSheet.create({
+  cartCard: {
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.___lightGray,
+    padding: 20,
+  },
   formControl: {
     borderWidth: 1,
     borderColor: "gray",

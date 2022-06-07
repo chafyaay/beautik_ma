@@ -36,9 +36,7 @@ export class FormValidator {
   buildForm() {}
 
   validate() {
-    Object.values(this._validators).forEach((item) => {
-      console.log(item);
-    });
+    Object.values(this._validators).forEach((item) => {});
   }
 }
 /*

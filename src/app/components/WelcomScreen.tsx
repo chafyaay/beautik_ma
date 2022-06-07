@@ -18,10 +18,10 @@ export function WelcomeScreen({ route, navigation }: WelcomeScreenProps) {
   return (
     <flexboxLayout
       onTap={() => {
-        setAppProps({
+        /*  setAppProps({
           ...appProps,
           navBar: { show: true, navigation: navigation },
-        });
+        }); */
         /*   try {
           setNavBarOptions({ show: true, navigation: navigation });
         } catch (error) {

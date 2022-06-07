@@ -20,14 +20,6 @@ export function LocalStorage(product?: any) {
         cart[index].qnte += a;
       }
     }
-    alert("index" + index);
-    console.log("**************************");
-    console.log("**************************");
-    console.log(cart);
-
-    console.log("*********** end ***************");
-    console.log("**************************");
-
     setItem("cart", []);
     setItem("cart", cart);
   };
