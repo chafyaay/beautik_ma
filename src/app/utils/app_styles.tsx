@@ -13,7 +13,12 @@ export const colors = {
   ___orange: "hotpink",
   ___black: "#000303",
   ___lightGray: "#F7F7F7",
-  ___active: "#6CC04A",
+  ___active: "#05B364",
+  ___promo: "#FCD74C",
+  ___blue: "#397FF2",
+  ___danger: "#FD2822",
+  ___warning: "orange",
+  ___white: "white",
 };
 
 export const separators = {
@@ -67,8 +72,8 @@ export const app_styles = StyleSheet.create({
     textAlignment: "center",
     alignContent: "center",
     paddingTop: 12,
-    width: "100%",
     backgroundColor: colors.__default,
+    textTransform: "uppercase",
   },
   btn_primary: {
     backgroundColor: colors.__primary,
@@ -79,6 +84,9 @@ export const app_styles = StyleSheet.create({
   link: {
     backgroundColor: "transparent",
     color: colors.__link,
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 15,
   },
   btntext: {
     fontWeight: "bold",

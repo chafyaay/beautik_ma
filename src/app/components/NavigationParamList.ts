@@ -7,4 +7,5 @@ export type MainStackParamList = {
   RegisterScreen: {};
   LoginScreen: {};
   onPageLoaded: {};
+  ShipementScreen: {};
 };

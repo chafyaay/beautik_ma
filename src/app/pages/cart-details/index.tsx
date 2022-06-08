@@ -6,10 +6,12 @@ import { FrameNavigationProp } from "react-nativescript-navigation";
 import { MainStackParamList } from "../../components/NavigationParamList";
 import AddItem from "../../shared-ui/add-item";
 import { SnackBarTest } from "../../shared-ui/modal/snack";
-import { AppContext } from "../../utils/context";
+import { AppContext, CartContext } from "../../utils/context";
 import { colors, app_styles } from "../../utils/app_styles";
-import { getItem, LocalStorage } from "../../utils/storage";
+import { getItem, CartStorage } from "../../utils/storage";
 import { AppCard } from "../product-card";
+
+var phone = require("nativescript-phone");
 
 type CartDetailsProps = {
   route: RouteProp<MainStackParamList, "CartDetails">;
@@ -17,11 +19,12 @@ type CartDetailsProps = {
 };
 
 export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
-  const [Cart, setCart] = React.useState([]);
   const { appProps, setAppProps } = useContext(AppContext);
+  const { cartContext, setCartContext } = useContext(CartContext);
   const [subTotal, setSubTotal] = React.useState(0);
   const [qnte, setQnte] = React.useState(0);
   const rout = route.params;
+
   const getSubTotal = (cart: any[]) => {
     let subtotal = 0;
     if (cart)
@@ -36,13 +39,11 @@ export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
       });
     setSubTotal(subtotal);
   };
-  const _cart = getItem("cart") || [];
 
   React.useEffect(() => {
-    setCart(getItem("cart"));
+    setCartContext({ cart: getItem("cart") });
+    getSubTotal(getItem("cart"));
   }, []);
-
-  useEffect(() => {});
 
   const cartEmptytemplate = () => (
     <stackLayout padding={20}>
@@ -71,30 +72,122 @@ export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
                     text="Page d'accuil "
                   ></button> */
   }
+
   return (
-    <stackLayout backgroundColor={colors.___lightGray} height="100%">
-      {!!Cart ? (
-        Cart.length <= 0 ? (
+    <gridLayout width={"100%"} rows="auto,*,auto" style={styles.body}>
+      <flexboxLayout row={0} paddingLeft="20">
+        <button
+          onTap={() => {
+            navigation.reset({
+              index: 1,
+              routes: [{ name: "Home" }],
+            });
+          }}
+          className="icomoon"
+          text="&#xea40;"
+        ></button>
+      </flexboxLayout>
+      <flexboxLayout row={2} style={styles.order} background="transparent">
+        <button
+          style={styles.call}
+          marginRight="20"
+          class="icomoon"
+          text="&#xe942;"
+          onTap={() => {
+            phone.dial("+212 6 61 42 01 92", false);
+          }}
+        ></button>
+        <button
+          onTap={() => {
+            navigation.reset({
+              index: 2,
+              routes: [{ name: "ShipementScreen" }],
+            });
+          }}
+          style={styles.orderbtn}
+          text={`Commandez ( ${subTotal} Dhs) `}
+          textWrap
+        ></button>
+      </flexboxLayout>
+
+      {!!cartContext ? (
+        cartContext.length <= 0 ? (
           <>{cartEmptytemplate()}</>
         ) : (
           <scrollView row={1} height="100%">
             <stackLayout padding={20}>
-              {Cart.map((_item) => (
-                <>
-                  <AppCard
-                    {...{ product: _item.data, cardType: "c" }}
-                  ></AppCard>
-                </>
-              ))}
+              {cartContext.cart.map((_item) => {
+                return (
+                  <>
+                    <AppCard
+                      {...{
+                        product: _item.data,
+                        cardType: "c",
+                        qnte: _item.qnte,
+                      }}
+                    ></AppCard>
+                  </>
+                );
+              })}
             </stackLayout>
           </scrollView>
         )
       ) : (
         <>{cartEmptytemplate()}</>
       )}
-    </stackLayout>
+    </gridLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  body: { height: "100%", backgroundColor: colors.___lightGray },
+  brief: {
+    backgroundColor: colors.__default,
+    padding: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  order: {
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    background: "linear-gradient(to top, rgba(0,0,0,0), white)",
+  },
+  call: {
+    ...app_styles.btn_primary,
+    height: 50,
+    width: "20%",
+    color: colors.___lightGray,
+    borderRadius: 4,
+    fontSize: 30,
+  },
+  orderbtn: {
+    ...app_styles.btn_primary,
+    padding: 0,
+    height: 50,
+    color: colors.___lightGray,
+    borderRadius: 4,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    width: "80%",
+    fontSize: 18,
+    letterSpacing: 0.04,
+  },
+  gohome: {
+    ...app_styles.btn_primary,
+    padding: 0,
+    height: 50,
+    color: colors.___lightGray,
+    borderRadius: 4,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    width: "80%",
+    fontSize: 18,
+    letterSpacing: 0.04,
+  },
+});
 
 /* 
 function xxxxx(navigation) {

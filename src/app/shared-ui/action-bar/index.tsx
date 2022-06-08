@@ -1,135 +1,84 @@
-import { Frame } from "@nativescript/core";
-import { RouteProp } from "@react-navigation/core";
 import * as React from "react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-nativescript";
-import { FrameNavigationProp } from "react-nativescript-navigation";
-import { MainStackParamList } from "../../components/NavigationParamList";
-import { AppContext } from "../../utils/context";
-import { colors, app_styles } from "../../utils/app_styles";
-import { Icart } from "../../utils/props.interfaces";
-import { getItem } from "../../utils/storage";
+import { colors } from "../../utils/app_styles";
 
 function NavBar({ options }) {
   const { navigation, qnte } = options;
   const [_qnte, setQnte] = useState(0);
   useEffect(() => {});
   return (
-    <gridLayout
-      columns="auto,*,80"
-      onTap={() => {
-        /* 1. Navigate to the Details route with params */
-        navigation.navigate("CartDetails", {
-          itemId: 86,
-          otherParam: "anything you want here",
-        });
-      }}
+    <flexboxLayout
+      style={STYLES.header}
+      flexDirection="row"
+      justifyContent="space-between"
     >
-      <label
-        width={80}
-        height="80"
-        fontSize={30}
-        col={2}
-        text="&#xe901;"
-        className="icomoon"
-      ></label>
-      <label
-        textAlignment="center"
-        col={2}
-        borderRadius="30"
-        width={30}
-        height="30"
-        marginTop={-30}
-        marginRight="-30"
-        backgroundColor={colors.__primary}
-      >
-        {qnte}
-      </label>
-    </gridLayout>
-  );
-}
-
-function getQnte(cart: Icart[]) {
-  if (cart) {
-    if (cart.length > 0) {
-      return cart.reduce(
-        (a: any, b: any) => {
-          a.qnte += b.qnte;
-          return a;
-        },
-        { qnte: 0 }
-      ).qnte;
-    }
-  }
-
-  return 0;
-}
-
-function ____({ options }) {
-  const appData = useContext(AppContext) as any;
-  const [qnte, setQnte] = useState(0);
-
-  const getQnte = (cart: Icart[]) => {
-    if (cart) {
-      if (cart.length > 0) {
-        return cart.reduce(
-          (a: any, b: any) => {
-            a.qnte += b.qnte;
-            return a;
-          },
-          { qnte: 0 }
-        ).qnte;
-      }
-    }
-
-    return 0;
-  };
-
-  useEffect(() => {
-    if (options.cart) {
-      setQnte(getQnte(options.cart));
-    }
-  });
-
-  const isLoged = false;
-
-  return (
-    <gridLayout
-      backgroundColor={colors.__primary}
-      columns="60,*,auto"
-      height={80}
-      width="100%"
-    >
-      <button className="no-font icomoon" onTap={() => Frame.goBack()} col={0}>
-        &#xea40;
-      </button>
-      <textField style={app_styles.formControl} col={1}></textField>
-      <gridLayout
-        width={80}
-        rows="*,*,*"
-        col={2}
+      <stackLayout
+        horizontalAlignment="center"
         onTap={() => {
-          options.navigate(isLoged ? "CartDetails" : "LoginScreen");
+          navigation.reset({
+            index: 1,
+            routes: [{ name: "CartDetails" }],
+          });
         }}
       >
-        <label row={1} style={STYLES.cartIcon} className="icomoon">
-          &#xe901;
-        </label>
-        <label row={1} style={STYLES.cartValue} className="cart-container">
+        <button
+          marginLeft={20}
+          left={0}
+          top="0"
+          fontSize={30}
+          col={2}
+          text="&#xe903;"
+          className="icomoon"
+        ></button>
+      </stackLayout>
+      <gridLayout
+        rows="*"
+        style={STYLES.cartIcon}
+        onTap={() => {
+          navigation.reset({
+            index: 1,
+            routes: [{ name: "CartDetails" }],
+          });
+        }}
+      >
+        <label
+          textAlignment="center"
+          borderRadius="25"
+          width={25}
+          height="25"
+          marginTop={-35}
+          marginRight={-30}
+          backgroundColor={colors.__primary}
+          fontSize={15}
+        >
           {qnte}
         </label>
+        <label
+          verticalAlignment="middle"
+          horizontalAlignment="center"
+          fontSize={30}
+          text="&#xe901;"
+          className="icomoon"
+        ></label>
       </gridLayout>
-    </gridLayout>
+    </flexboxLayout>
   );
 }
 
 export default NavBar;
 
 export const STYLES = StyleSheet.create({
+  header: {
+    borderBottomColor: colors.__default,
+    borderBottomWidth: 1,
+  },
   cartIcon: {
+    width: 100,
     color: colors.__default,
     fontSize: 30,
     textAlignment: "center",
+    verticalAlignment: "middle",
   },
   cartValue: {
     color: colors.___lightGray,

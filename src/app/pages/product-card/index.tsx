@@ -4,69 +4,127 @@ import { StyleSheet } from "react-nativescript";
 import AddItem from "../../shared-ui/add-item";
 import { RatingStars } from "../../shared-ui/rating-stars/rating-stars";
 import { app_styles, colors } from "../../utils/app_styles";
-import { LocalStorage, getItem } from "../../utils/storage";
+import { getItem } from "../../utils/storage";
 
-export function AppCard({ product, cardType }) {
+export function AppCard({ product, cardType, qnte }) {
+  const [_qnte, set_qnte] = React.useState(0);
   let template: any;
-  switch (cardType) {
-    case "c":
-      try {
-        console.log("====================================");
-        console.log(cardType);
-        console.log("====================================");
 
-        template = CardTemplates.cart(product);
-      } catch (error) {
+  React.useEffect(() => {
+    const cartdetails = getItem("cart");
+    if (cartdetails) {
+      const prd = cartdetails.find((item) => item.id == product.id);
+
+      if (prd) {
+        set_qnte(prd.qnte);
+      }
+    }
+    console.log("====================================");
+    console.log();
+    console.log("====================================");
+  });
+
+  const render = () => {
+    switch (cardType) {
+      case "c":
+        try {
+          template = CardTemplates.cart(product, _qnte);
+        } catch (error) {
+          template = (
+            <>
+              <label text={error}></label>
+            </>
+          );
+        }
+        break;
+      case "p":
+        template = CardTemplates.product(product, 0);
+        break;
+      default:
         template = (
           <>
-            <label text={error}></label>
+            <label text="ERR"></label>
           </>
         );
-      }
-      break;
-    case "p":
-      template = CardTemplates.product(product);
-      break;
-    default:
-      template = (
-        <>
-          <label text="ERR"></label>
-        </>
-      );
-  }
-  return template;
+    }
+    return template;
+  };
+
+  return render();
 }
 
 const CardTemplates = {
-  product: (product) => (
-    <gridLayout style={styles.card} columns="*,*">
-      <image col={0} src={product.cover}></image>
-      <stackLayout col={1}>
-        <label className="text">{product.brandName}</label>
-        <flexboxLayout marginTop={10}>
-          {product.discountedPrice > 0 &&
-          product.discountedPrice < product.price ? (
-            <>
-              <label
-                marginRight={10}
-                textDecoration="line-through"
-                color={colors.__default}
-                className="price old"
-              >
-                {product.price} DH
-              </label>
-              <label className="price">{product.discountedPrice} DH</label>
-            </>
-          ) : (
-            <label className="price">{product.price} DH</label>
-          )}
-        </flexboxLayout>
-        <RatingStars data={product}></RatingStars>
-        <AddItem {...{ product: product, type: "p" }}></AddItem>
-      </stackLayout>
-    </gridLayout>
+  product: (product, qnte) => (
+    <stackLayout style={styles.card}>
+      <gridLayout columns="*,*">
+        <image col={0} src={product.cover}></image>
+        {product.discountedPrice < product.price ? (
+          <button
+            textWrap
+            horizontalAlignment="left"
+            verticalAlignment="top"
+            width={40}
+            height={40}
+            backgroundColor={colors.___promo}
+            row={0}
+            col={0}
+            fontSize="13"
+            borderRadius={5}
+            text={
+              Math.floor(
+                ((product.discountedPrice - product.price) * 100) /
+                  product.price
+              ).toLocaleString() + "%"
+            }
+          ></button>
+        ) : (
+          <></>
+        )}
+
+        <stackLayout col={1}>
+          <label textWrap className="text">
+            {product.brandName}
+          </label>
+          <flexboxLayout marginTop={10}>
+            {product.discountedPrice > 0 &&
+            product.discountedPrice < product.price ? (
+              <>
+                <label
+                  marginRight={10}
+                  textDecoration="line-through"
+                  color={colors.__default}
+                  className="price old"
+                >
+                  {product.price} DH
+                </label>
+                <label className="price">{product.discountedPrice} DH</label>
+              </>
+            ) : (
+              <label className="price">{product.price} DH</label>
+            )}
+          </flexboxLayout>
+          <RatingStars data={product}></RatingStars>
+        </stackLayout>
+      </gridLayout>
+
+      <gridLayout padding={0} columns="*,*">
+        <stackLayout col={0} paddingRight="20">
+          <button
+            width={"100%"}
+            horizontalAlignment="left"
+            marginLeft="0"
+            marginRight="10"
+            style={app_styles.btn}
+            text="details"
+          ></button>
+        </stackLayout>
+        <stackLayout col={1}>
+          <AddItem {...{ product: product, type: "p" }}></AddItem>
+        </stackLayout>
+      </gridLayout>
+    </stackLayout>
   ),
-  cart: (product) => (
+  cart: (product, qnte) => (
     <gridLayout style={app_styles.cartCard} rows="auto,auto" columns="auto,*">
       <image
         verticalAlignment="top"
@@ -76,6 +134,24 @@ const CardTemplates = {
         width="100"
         marginRight={10}
       ></image>
+      <button
+        textWrap
+        horizontalAlignment="left"
+        verticalAlignment="top"
+        width={40}
+        height={40}
+        backgroundColor={colors.___promo}
+        row={0}
+        col={0}
+        fontSize="13"
+        borderRadius={5}
+        text={
+          Math.floor(
+            ((product.discountedPrice - product.price) * 100) / product.price
+          ).toLocaleString() + "%"
+        }
+      ></button>
+
       <stackLayout col={1} row="0">
         <label className="text" textWrap>
           {product.brandName}
@@ -89,13 +165,17 @@ const CardTemplates = {
                 textDecoration="line-through"
                 color={colors.__default}
                 className="price old"
-              >
-                {product.price} DH
-              </label>
-              <label className="price">{product.discountedPrice} DH</label>
+              ></label>
+              <label
+                className="price"
+                text={qnte + "x" + product.discountedPrice + "Dhs"}
+              ></label>
             </>
           ) : (
-            <label className="price">{product.price} DH</label>
+            <label
+              className="price"
+              text={qnte + "x" + product.price + "Dhs"}
+            ></label>
           )}
         </flexboxLayout>
         <stackLayout>

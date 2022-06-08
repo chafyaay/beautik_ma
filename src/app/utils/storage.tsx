@@ -1,20 +1,47 @@
 import { getString, setString } from "@nativescript/core/application-settings";
 import { ProductCardProps, Icart } from "./props.interfaces";
 
-export function LocalStorage(product?: any) {
+export function CartStorage(product?: any) {
   let cart = getItem("cart") || [];
   let cartProduct: any = {};
+
+  this.getSubTotal = () => {
+    let subTotal = 0;
+    if (cart) {
+      if (cart.length > 0) {
+        cart.forEach((element: any) => {
+          const price =
+            product.discountedPrice < product.price
+              ? product.discountedPrice
+              : product.price;
+          const qnte = element.find((item: any) => item.id == product.id).qnte;
+          subTotal += qnte * price;
+        });
+      }
+    }
+    return subTotal;
+  };
 
   this.addToCart = (a?: number) => {
     let index;
     if (!cart || cart.length === 0) {
-      cartProduct = { id: product.id, qnte: a, data: product };
+      cartProduct = {
+        id: product.id,
+        qnte: a,
+        subTotal: this.getSubTotal(),
+        data: product,
+      };
       cart.push(cartProduct);
     } else {
       index = cart.findIndex((obj: any) => obj.id === product.id);
 
       if (index < 0) {
-        cartProduct = { id: product.id, qnte: a, data: product };
+        cartProduct = {
+          id: product.id,
+          qnte: a,
+          subTotal: this.getSubTotal(),
+          data: product,
+        };
         cart.push(cartProduct);
       } else {
         cart[index].qnte += a;

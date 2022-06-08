@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { app_styles } from "../../utils/app_styles";
 
 export const RatingStars = ({ data }) => {
   const [width, setWidth] = useState(0);
@@ -28,7 +29,7 @@ export const RatingStars = ({ data }) => {
           ></image>
         </absoluteLayout>
       </absoluteLayout>
-      <label marginTop={10} textWrap>
+      <label style={app_styles.link} marginTop={10} textWrap>
         {data?.comments?.length
           ? data?.comments?.length + "Avis clients vérifiés"
           : ""}{" "}

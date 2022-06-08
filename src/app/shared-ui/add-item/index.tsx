@@ -1,57 +1,67 @@
 import * as React from "react";
 import { useContext, useState, useEffect } from "react";
 import { StyleSheet } from "react-nativescript";
-import { AppContext, NotificationContext } from "../../utils/context";
+import { CartContext, NotificationContext } from "../../utils/context";
 import { app_styles, colors } from "../../utils/app_styles";
-import { getItem, LocalStorage } from "../../utils/storage";
+import { getItem, CartStorage } from "../../utils/storage";
 
 export default function AddItem({ product, type }) {
-  const { appProps, setAppProps } = useContext(AppContext);
   const { notification, setNotification } = useContext(NotificationContext);
   const [qnte, setQnte] = useState(0);
+  const { cartContext, setCartContext } = useContext(CartContext);
 
-  const lstorage = new LocalStorage(product);
+  const lstorage = new CartStorage(product);
 
   useEffect(() => {
-    updateQnte();
+    getProductQnte();
   }, []);
 
   // add to cart
   const addItem = () => {
     lstorage.addToCart(1);
-    updateQnte();
-    setNotification({ show: true, bg: colors.___active });
-
-    /*     const _appProps = { ...appProps };
-    if (lstorage.getCartDetails) {
-      lstorage.addToCart(1);
-      const qnte = lstorage
-        .getCartDetails()
-        .find((item: any) => item.id === product.id)?.qnte;
-      if (qnte) setQnte(qnte);
-
-      _appProps.modal = type !== "cart";
-      setAppProps(_appProps);
-    } */
+    getProductQnte();
+    setNotification({
+      show: true,
+      bg: colors.___active,
+      msg: "Produit ajouté avec succès",
+    });
   };
 
-  const updateQnte = () => {
-    let cartdetails;
-    if (getItem("cart"))
-      cartdetails = getItem("cart").find((item: any) => item.id === product.id);
-    if (cartdetails) setQnte(cartdetails.qnte);
+  const getProductQnte = () => {
+    let cartdetails = getItem("cart") || [];
+    if (cartdetails)
+      cartdetails = cartdetails.find((item: any) => item.id === product.id);
+    if (cartdetails) {
+      setQnte(cartdetails.qnte);
+      return cartdetails.qnte;
+    }
   };
 
   // remove form cart
   const removeItem = () => {
     lstorage.addToCart(-1);
-    updateQnte();
+    getProductQnte();
+
+    if (getProductQnte() <= 0) {
+      const storage = new CartStorage(product);
+      storage.removeItem(product.id);
+    }
+    setNotification({
+      show: true,
+      bg: colors.___active,
+      msg: "La quantité d'articles a été mise à jour",
+    });
   };
 
   const removeProduct = () => {
-    const storage = new LocalStorage(product);
+    const storage = new CartStorage(product);
     storage.removeItem(product.id);
-    updateQnte();
+    setCartContext(getItem("cart"));
+    setNotification({
+      show: true,
+      bg: colors.___active,
+      msg: "Le Produit a été retiré du panier avec succès",
+    });
   };
 
   const render = () => (
@@ -73,7 +83,7 @@ export default function AddItem({ product, type }) {
         <></>
       )}
       <stackLayout width={type === "c" ? "50%" : "100%"}>
-        {qnte <= 0 ? (
+        {type !== "c" && qnte <= 0 ? (
           <button
             style={{ ...app_styles.btn, ...app_styles.btn_primary }}
             onTap={() => addItem()}
@@ -82,7 +92,11 @@ export default function AddItem({ product, type }) {
             text="Acheter"
           ></button>
         ) : (
-          <gridLayout columns="*,*,*">
+          <flexboxLayout
+            marginTop={10}
+            flexDirection="row"
+            justifyContent="flex-end"
+          >
             {type === "c" ? (
               <>
                 <button
@@ -102,8 +116,12 @@ export default function AddItem({ product, type }) {
               style={styles.add}
               className="btn icomoon"
               onTap={() => removeItem()}
-              isEnabled={qnte > 1}
-              backgroundColor={qnte <= 1 ? colors.__disabled : colors.__primary}
+              isEnabled={
+                (type !== "c" && qnte >= 1) || (type == "c" && qnte > 1)
+              }
+              backgroundColor={
+                type == "c" && qnte <= 1 ? colors.__disabled : colors.__primary
+              }
             >
               &#xea0b;
             </button>
@@ -122,7 +140,7 @@ export default function AddItem({ product, type }) {
             >
               &#xea0a;
             </button>
-          </gridLayout>
+          </flexboxLayout>
         )}
       </stackLayout>
     </flexboxLayout>
@@ -144,6 +162,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 3,
     borderWidth: 0,
+    marginLeft: 5,
+    marginRight: 5,
   },
   input: {
     textAlignment: "center",
@@ -152,6 +172,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.___black,
     borderRadius: 3,
+    width: 40,
+    height: 40,
   },
   delete: {
     textAlignment: "center",

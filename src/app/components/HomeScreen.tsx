@@ -64,7 +64,7 @@ export function HomeScreen({ route, navigation }: HomeScreenProps) {
               {PRODUCTS.map((product: any) => (
                 <AppCard
                   key={product.id}
-                  {...{ product: product, cardType: "p" }}
+                  {...{ product: product, cardType: "p", qnte: qnte }}
                 ></AppCard>
               ))}
             </stackLayout>
