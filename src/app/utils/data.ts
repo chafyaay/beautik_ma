@@ -5,6 +5,7 @@ export const PRODUCTS: {
   desc: string;
   price: number;
   discountedPrice: number;
+  shippingFee: number;
   cover: string;
   imagesUrls: string[];
   comments: {
@@ -30,9 +31,16 @@ export const PRODUCTS: {
                                             </div>`,
     price: 100,
     discountedPrice: 90,
+    shippingFee: 10,
     cover:
       "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/v/9.jpg",
     imagesUrls: [
+      "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04733/y/18.jpg",
+      "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/l/14.jpg",
+      "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/l/14.jpg",
+      "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/l/14.jpg",
+      "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/l/14.jpg",
+      "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/l/14.jpg",
       "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now04602/l/14.jpg",
     ],
     comments: [
@@ -61,6 +69,7 @@ export const PRODUCTS: {
                                             </div>`,
     price: 80,
     discountedPrice: 50,
+    shippingFee: 10,
     cover:
       "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/dee/dee10016/l/14.jpg",
     imagesUrls: [
@@ -92,6 +101,7 @@ export const PRODUCTS: {
                                             </div>`,
     price: 100,
     discountedPrice: 90,
+    shippingFee: 10,
     cover:
       "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cfa/cfa01496/v/35.jpg",
     imagesUrls: [
@@ -123,6 +133,7 @@ export const PRODUCTS: {
                                             </div>`,
     price: 89,
     discountedPrice: 77,
+    shippingFee: 17,
     cover:
       "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/mli/mli00952/v/199.jpg",
     imagesUrls: [
@@ -153,6 +164,7 @@ export const PRODUCTS: {
                                             </div>`,
     price: 100,
     discountedPrice: 90,
+    shippingFee: 10,
     cover:
       "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/ava/ava35110/l/8.jpg",
     imagesUrls: [

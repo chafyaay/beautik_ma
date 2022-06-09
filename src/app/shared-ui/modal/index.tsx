@@ -9,77 +9,7 @@ import {
 } from "../../utils/context";
 import { app_styles } from "../../utils/app_styles";
 
-// This is needed to keep the reconciler aware that it's the same portal on each render
-const portalRoot = new RNS.NSVRoot();
-const portalLabel = "bottomsheet:Unique label to describe my portal";
-
-import { AbsoluteLayout } from "@nativescript/core";
-import { set } from "react-hook-form";
-
-// This is needed to keep the reconciler aware that it's the same portal on each render
-
-export default function BottomSheetTest({ options }) {
-  // A ref to the container
-  const containerRef = React.useRef(null);
-
-  // A ref for the react portal
-  const portalRef = React.useRef(null);
-  const { appProps, setAppProps } = React.useContext(AppContext) as any;
-
-  React.useEffect(() => {
-    setAppProps({ ...appProps, modal: false });
-    appProps.modal ? handleOpenModal() : handleCloseModal();
-  });
-
-  const handleOpenModal = () => {
-    const container = containerRef.current!
-      .nativeView as ViewWithBottomSheetBase;
-    container.showBottomSheet({
-      view: portalRef.current!.nativeView,
-      context: {},
-      closeCallback: (args) => {
-        console.log(`Closed with args`, args);
-      },
-    });
-  };
-
-  const handleCloseModal = () => {
-    const portalView = portalRef.current?.nativeView as any;
-
-    portalView.closeBottomSheet({ name: "react-nativescript is king" });
-  };
-
-  return (
-    <>
-      <stackLayout ref={containerRef}></stackLayout>
-      {/*
-              This portal is not rendered below the button.
-              It's rendered into a null root, effectively creating a new DOM tree.
-          */}
-      {RNS.createPortal(
-        <stackLayout ref={portalRef}>
-          <button
-            className="btn"
-            style={app_styles.btn_primary}
-            text="Consulter votre panier"
-            onTap={() => {
-              options?.navigation?.navigate("CartDetails");
-              try {
-                handleCloseModal();
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-          />
-        </stackLayout>,
-        portalRoot,
-        portalLabel
-      )}
-    </>
-  );
-}
-
-export function TopSheetModal({ options }) {
+export function TopSheetModal() {
   const [showModal, setShowModal] = React.useState(false);
   const { notification, setNotification } =
     React.useContext(NotificationContext);
@@ -127,12 +57,12 @@ export function TopSheetModal({ options }) {
       padding={20}
       width="100%"
       height={80}
-      backgroundColor="orange"
+      backgroundColor={notification.bg}
     >
       <label
         verticalAlignment="middle"
         col={0}
-        text="hello"
+        text={notification.msg}
         color={"white"}
       ></label>
       <label
@@ -141,7 +71,7 @@ export function TopSheetModal({ options }) {
         className="icomoon"
         fontSize={30}
         text="&#xe902;"
-        color={"white"}
+        color={notification.color}
       ></label>
     </gridLayout>
   );

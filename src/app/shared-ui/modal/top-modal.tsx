@@ -46,8 +46,8 @@ export function TopSheetModalComponent({ options }) {
       height="80"
       onLoaded={($event) => onloadhandler($event)}
     >
-      <button text="hello"></button>
-      <button text="X"></button>
+      <button text="hello----"></button>
+      <button text="sX"></button>
     </flexboxLayout>
   );
 }

@@ -10,6 +10,7 @@ import { AppContext, CartContext } from "../../utils/context";
 import { colors, app_styles } from "../../utils/app_styles";
 import { getItem, CartStorage } from "../../utils/storage";
 import { AppCard } from "../product-card";
+import NavBar from "../../shared-ui/action-bar";
 
 var phone = require("nativescript-phone");
 
@@ -21,9 +22,8 @@ type CartDetailsProps = {
 export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
   const { appProps, setAppProps } = useContext(AppContext);
   const { cartContext, setCartContext } = useContext(CartContext);
-  const [subTotal, setSubTotal] = React.useState(0);
   const [qnte, setQnte] = React.useState(0);
-  const rout = route.params;
+  const [SubTotal, setSubTotal] = React.useState(null);
 
   const getSubTotal = (cart: any[]) => {
     let subtotal = 0;
@@ -42,103 +42,117 @@ export const CartDetails = ({ route, navigation }: CartDetailsProps) => {
 
   React.useEffect(() => {
     setCartContext({ cart: getItem("cart") });
-    getSubTotal(getItem("cart"));
   }, []);
 
-  const cartEmptytemplate = () => (
-    <stackLayout padding={20}>
-      <label text="Votre panier est vide"></label>
-      <button
-        onTap={() => {
-          navigation.reset({
-            index: 1,
-            routes: [{ name: "Home" }],
-          });
-        }}
-        text="Page d'accuil "
-      ></button>
-    </stackLayout>
-  );
+  useEffect(() => {
+    getSubTotal(getItem("cart"));
+  });
 
-  {
-    /*      <button
-                    onTap={() => {
-                      //  navigation.navigate("Home", { cart: getItem("cart") });
-                      navigation.reset({
-                        index: 1,
-                        routes: [{ name: "Home" }],
-                      });
-                    }}
-                    text="Page d'accuil "
-                  ></button> */
-  }
-
-  return (
-    <gridLayout width={"100%"} rows="auto,*,auto" style={styles.body}>
-      <flexboxLayout row={0} paddingLeft="20">
+  const ___EMPTY_CART = () => (
+    <gridLayout padding={20} rows="*,auto,*">
+      <stackLayout row={1}>
+        <label
+          horizontalAlignment="center"
+          textAlignment="center"
+          fontSize={100}
+          text="&#xe901;"
+          className="icomoon"
+        ></label>
+        <label
+          horizontalAlignment="center"
+          textAlignment="center"
+          fontSize={40}
+          fontWeight="800"
+          text="Panier est vide :("
+          textWrap
+          marginBottom={60}
+        ></label>
         <button
+          style={{ ...app_styles.btn, ...app_styles.btn_primary }}
           onTap={() => {
             navigation.reset({
               index: 1,
               routes: [{ name: "Home" }],
             });
           }}
-          className="icomoon"
-          text="&#xea40;"
-        ></button>
-      </flexboxLayout>
-      <flexboxLayout row={2} style={styles.order} background="transparent">
-        <button
-          style={styles.call}
-          marginRight="20"
-          class="icomoon"
-          text="&#xe942;"
-          onTap={() => {
-            phone.dial("+212 6 61 42 01 92", false);
-          }}
-        ></button>
-        <button
-          onTap={() => {
-            navigation.reset({
-              index: 2,
-              routes: [{ name: "ShipementScreen" }],
-            });
-          }}
-          style={styles.orderbtn}
-          text={`Commandez ( ${subTotal} Dhs) `}
-          textWrap
-        ></button>
-      </flexboxLayout>
-
-      {!!cartContext ? (
-        cartContext.length <= 0 ? (
-          <>{cartEmptytemplate()}</>
-        ) : (
-          <scrollView row={1} height="100%">
-            <stackLayout padding={20}>
-              {cartContext.cart.map((_item) => {
-                return (
-                  <>
-                    <AppCard
-                      {...{
-                        product: _item.data,
-                        cardType: "c",
-                        qnte: _item.qnte,
-                      }}
-                    ></AppCard>
-                  </>
-                );
-              })}
-            </stackLayout>
-          </scrollView>
-        )
-      ) : (
-        <>{cartEmptytemplate()}</>
-      )}
+        >
+          <formattedString>
+            <span class="icomoon" text="&#xea40;"></span>
+            <span text=" \t page d'accueil "></span>
+          </formattedString>
+        </button>
+      </stackLayout>
     </gridLayout>
   );
-};
 
+  const ___CART_DETAILS = () => {
+    let template = ___EMPTY_CART();
+    if (cartContext.cart) {
+      if (cartContext.cart.length > 0) {
+        template = (
+          <>
+            <gridLayout rows="auto,*,auto">
+              <stackLayout row={0}>
+                <NavBar
+                  options={{ navigation: navigation, qnte: qnte, goBack: true }}
+                ></NavBar>
+              </stackLayout>
+              <scrollView row={1} height={"100%"}>
+                <stackLayout>
+                  {cartContext.cart.map((_item: any) => {
+                    return (
+                      <AppCard
+                        key={_item.id}
+                        {...{
+                          navigation: navigation,
+                          product: _item.data,
+                          cardType: "c",
+                          qnte: _item.qnte,
+                        }}
+                      ></AppCard>
+                    );
+                  })}
+                </stackLayout>
+              </scrollView>
+              <flexboxLayout
+                row={2}
+                style={styles.order}
+                background="transparent"
+              >
+                <button
+                  style={styles.call}
+                  marginRight="20"
+                  class="icomoon"
+                  text="&#xe942;"
+                  onTap={() => {
+                    phone.dial("+212 6 61 42 01 92", false);
+                  }}
+                ></button>
+                <button
+                  onTap={() => {
+                    navigation.reset({
+                      index: 2,
+                      routes: [{ name: "ShipementScreen" }],
+                    });
+                  }}
+                  style={styles.orderbtn}
+                  text={`Commandez ( ${SubTotal} Dhs) `}
+                  textWrap
+                ></button>
+              </flexboxLayout>
+            </gridLayout>
+          </>
+        );
+      }
+    }
+    return template;
+  };
+  return ___CART_DETAILS();
+};
+/* -------------------------------------------------- */
+/* -------------------------------------------------- */
+/* -------------------------------------------------- */
+/* -------------------------------------------------- */
 const styles = StyleSheet.create({
   body: { height: "100%", backgroundColor: colors.___lightGray },
   brief: {
@@ -188,155 +202,3 @@ const styles = StyleSheet.create({
     letterSpacing: 0.04,
   },
 });
-
-/* 
-function xxxxx(navigation) {
-  const { appProps, setAppProps } = useContext(AppContext);
-  const [subTotal, setSubTotal] = React.useState(0);
-  const [qnte, setQnte] = React.useState(0);
-  const [cart, setCart] = React.useState([]);
-  const [template, setTemplate] = React.useState(<></>);
-
-  const render = () => {
-    if (!!Cart) {
-      if (Cart.length <= 0) return cartEmptytemplate();
-      else
-        return (
-          <>
-            <gridLayout rows="auto,*,auto">
-              <gridLayout
-                height={100}
-                rows="auto,auto"
-                columns="*,auto"
-                row={0}
-              >
-                <label
-                  row={0}
-                  padding="0 20"
-                  text="Resumé Panier"
-                  textWrap
-                ></label>
-
-                <flexboxLayout
-                  row={1}
-                  col={0}
-                  padding="0 20"
-                  flexWrap="wrap"
-                  flexDirection="row"
-                  justifyContent="flex-start"
-                >
-                  <label text="Sous-Total: " textWrap></label>
-                  <label
-                    fontWeight="500"
-                    text={`${subTotal} Dhs`}
-                    textWrap
-                  ></label>
-                </flexboxLayout>
-
-                <button
-                  padding={20}
-                  textAlignment="right"
-                  horizontalAlignment="right"
-                  fontSize={30}
-                  className="icomoon"
-                  text="&#xe902;"
-                  onTap={() => {
-                    navigation.navigate("Home");
-                    setAppProps({
-                      ...appProps,
-                      navBar: { show: true, navigation: navigation },
-                    });
-                  }}
-                ></button>
-              </gridLayout>
-
-              <scrollView row={1}>
-                <stackLayout padding={20}>
-                  {Cart.map((_item) => (
-                    <>
-                      <CartDetailsCardtemplate
-                        product={_item.data}
-                        navigation={navigation}
-                      ></CartDetailsCardtemplate>
-                    </>
-                  ))}
-                </stackLayout>
-              </scrollView>
-            </gridLayout>
-          </>
-        );
-    } else return cartEmptytemplate();
-  };
-
-  useEffect(() => {
-    if (cart)
-      if (cart.length <= 0) {
-        setCart(getItem("cart"));
-        getSubTotal(getItem("cart"));
-        setAppProps({
-          cart: getItem("cart") || [],
-          modal: false,
-          navBar: { show: false, navigation: navigation },
-        });
-        setTemplate(render());
-      }
-  });
-
-  const getSubTotal = (cart: any[]) => {
-    let subtotal = 0;
-    if (cart)
-      cart.forEach((item: any) => {
-        const price =
-          item.data.discountedPrice > 0 ||
-          item.data.discountedPrice < item.data.price
-            ? item.data.discountedPrice
-            : appProps.cart.data.price;
-        subtotal += price * item.qnte;
-        setQnte(item.qnte);
-      });
-    setSubTotal(subtotal);
-  };
-
-  const render = () => {
-    if (cart) {
-      if (cart.length <= 0)
-        return (
-          <stackLayout padding={20}>
-            <label text="Votre panier est vide"></label>
-            <button
-              onTap={() => navigation.navigate("Home")}
-              text="Page d'accuil "
-            ></button>
-          </stackLayout>
-        );
-      else
-        return (
-          <stackLayout padding={20}>
-            <scrollView row={1}>
-              <stackLayout>
-                {appProps.cart.map((item) => (
-                  <CartDetailsCardtemplate
-                    product={item.data}
-                  ></CartDetailsCardtemplate>
-                ))}
-              </stackLayout>
-            </scrollView>
-            <flexboxLayout padding={10} flexDirection="row">
-              <button
-                width={160}
-                marginRight="20"
-                class="btn icomoon"
-                text="&#xe942;"
-              ></button>
-              <button
-                class="btn"
-                text={`Commandez ( ${subTotal} Dhs) `}
-              ></button>
-            </flexboxLayout>
-          </stackLayout>
-        );
-    }
-  };
-  return <>{template}</>;
-}
- */

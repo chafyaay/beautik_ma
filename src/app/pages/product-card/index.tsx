@@ -6,7 +6,7 @@ import { RatingStars } from "../../shared-ui/rating-stars/rating-stars";
 import { app_styles, colors } from "../../utils/app_styles";
 import { getItem } from "../../utils/storage";
 
-export function AppCard({ product, cardType, qnte }) {
+export function AppCard({ navigation, product, cardType, qnte }) {
   const [_qnte, set_qnte] = React.useState(0);
   let template: any;
 
@@ -19,9 +19,6 @@ export function AppCard({ product, cardType, qnte }) {
         set_qnte(prd.qnte);
       }
     }
-    console.log("====================================");
-    console.log();
-    console.log("====================================");
   });
 
   const render = () => {
@@ -38,7 +35,7 @@ export function AppCard({ product, cardType, qnte }) {
         }
         break;
       case "p":
-        template = CardTemplates.product(product, 0);
+        template = CardTemplates.product(product, navigation);
         break;
       default:
         template = (
@@ -54,7 +51,7 @@ export function AppCard({ product, cardType, qnte }) {
 }
 
 const CardTemplates = {
-  product: (product, qnte) => (
+  product: (product, navigation) => (
     <stackLayout style={styles.card}>
       <gridLayout columns="*,*">
         <image col={0} src={product.cover}></image>
@@ -116,6 +113,17 @@ const CardTemplates = {
             marginRight="10"
             style={app_styles.btn}
             text="details"
+            onTap={() => {
+              navigation.reset({
+                index: 1,
+                routes: [
+                  {
+                    name: "ProductDetailsScreen",
+                    params: { product: product },
+                  },
+                ],
+              });
+            }}
           ></button>
         </stackLayout>
         <stackLayout col={1}>

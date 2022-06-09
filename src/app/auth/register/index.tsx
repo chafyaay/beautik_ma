@@ -4,7 +4,6 @@ import { useState } from "react";
 import { FrameNavigationProp } from "react-nativescript-navigation";
 import { MainStackParamList } from "../../components/NavigationParamList";
 import { app_styles } from "../../utils/app_styles";
-import { colors } from "../../utils";
 
 type RegisterScreenProps = {
   route: RouteProp<MainStackParamList, "RegisterScreen">;

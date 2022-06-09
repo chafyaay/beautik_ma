@@ -6,7 +6,7 @@ export const RatingStars = ({ data }) => {
 
   useEffect(() => {
     setWidth((data.rating * 100) / 5);
-  }, []);
+  });
 
   return (
     <>

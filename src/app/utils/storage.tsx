@@ -7,17 +7,21 @@ export function CartStorage(product?: any) {
 
   this.getSubTotal = () => {
     let subTotal = 0;
-    if (cart) {
-      if (cart.length > 0) {
-        cart.forEach((element: any) => {
-          const price =
-            product.discountedPrice < product.price
-              ? product.discountedPrice
-              : product.price;
-          const qnte = element.find((item: any) => item.id == product.id).qnte;
-          subTotal += qnte * price;
-        });
-      }
+    const price =
+      product.discountedPrice < product.price
+        ? product.discountedPrice
+        : product.price;
+
+    const prd = cart.find((item: any) => {
+      return item.id == product.id;
+    });
+
+    if (prd) {
+      try {
+        console.log("prd---------");
+        console.log(prd);
+        subTotal += prd?.qnte * price;
+      } catch (error) {}
     }
     return subTotal;
   };
@@ -29,6 +33,7 @@ export function CartStorage(product?: any) {
         id: product.id,
         qnte: a,
         subTotal: this.getSubTotal(),
+        shippingFee: product?.shippingFee,
         data: product,
       };
       cart.push(cartProduct);
@@ -40,11 +45,14 @@ export function CartStorage(product?: any) {
           id: product.id,
           qnte: a,
           subTotal: this.getSubTotal(),
+          shippingFee: product.shippingFee,
           data: product,
         };
         cart.push(cartProduct);
       } else {
         cart[index].qnte += a;
+        cart[index].subTotal = this.getSubTotal();
+        cart[index].shippingFee = product.shippingFee;
       }
     }
     setItem("cart", []);
@@ -53,9 +61,19 @@ export function CartStorage(product?: any) {
 
   this.removeItem = (prdId: any) => {
     const _cart = cart.filter((item) => item.id != prdId);
+    const prev = getItem("cart");
 
     setItem("cart", []);
     setItem("cart", _cart);
+
+    return {
+      prev: prev,
+      curr: _cart,
+    };
+  };
+
+  this.detectchange = (preve?, newvalue?) => {
+    return { prevValue: preve.length, currentvalue: newvalue.length };
   };
 
   this.getCartDetails = () => getItem("cart");

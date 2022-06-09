@@ -14,7 +14,7 @@ export default function AddItem({ product, type }) {
 
   useEffect(() => {
     getProductQnte();
-  }, []);
+  });
 
   // add to cart
   const addItem = () => {
@@ -34,7 +34,7 @@ export default function AddItem({ product, type }) {
     if (cartdetails) {
       setQnte(cartdetails.qnte);
       return cartdetails.qnte;
-    }
+    } else setQnte(0);
   };
 
   // remove form cart
@@ -44,6 +44,7 @@ export default function AddItem({ product, type }) {
 
     if (getProductQnte() <= 0) {
       const storage = new CartStorage(product);
+
       storage.removeItem(product.id);
     }
     setNotification({
@@ -55,8 +56,9 @@ export default function AddItem({ product, type }) {
 
   const removeProduct = () => {
     const storage = new CartStorage(product);
-    storage.removeItem(product.id);
-    setCartContext(getItem("cart"));
+    const remove = storage.removeItem(product.id);
+
+    setCartContext({ cart: getItem("cart") });
     setNotification({
       show: true,
       bg: colors.___active,
@@ -64,87 +66,85 @@ export default function AddItem({ product, type }) {
     });
   };
 
-  const render = () => (
-    <flexboxLayout
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-    >
-      {type === "c" ? (
+  const render = () => {
+    let template = <></>;
+    const addToCarttemplate = (
+      <flexboxLayout paddingTop={10} justifyContent="flex-end">
         <button
-          onTap={() => removeProduct()}
-          verticalAlignment="middle"
-          class="icomoon"
-          width={40}
-          text="&#xe9ac;"
-          style={styles.delete}
+          col={0}
+          style={styles.add}
+          className="btn icomoon"
+          onTap={() => removeItem()}
+          isEnabled={(type !== "c" && qnte >= 1) || (type == "c" && qnte > 1)}
+          backgroundColor={
+            type == "c" && qnte <= 1 ? colors.__disabled : colors.__primary
+          }
+        >
+          &#xea0b;
+        </button>
+        <textField
+          isEnabled={false}
+          col={1}
+          style={styles.input}
+          text={qnte.toLocaleString()}
+        ></textField>
+        <button
+          col={2}
+          style={styles.add}
+          className="btn icomoon"
+          onTap={() => addItem()}
+          isEnabled={product.stock > qnte}
+          backgroundColor={
+            product.stock <= qnte ? colors.__disabled : colors.__primary
+          }
+          text="&#xea0a;"
         ></button>
-      ) : (
-        <></>
-      )}
-      <stackLayout width={type === "c" ? "50%" : "100%"}>
-        {type !== "c" && qnte <= 0 ? (
-          <button
-            style={{ ...app_styles.btn, ...app_styles.btn_primary }}
-            onTap={() => addItem()}
-            isEnabled={qnte < product.stock}
-            textWrap
-            text="Acheter"
-          ></button>
-        ) : (
-          <flexboxLayout
-            marginTop={10}
-            flexDirection="row"
-            justifyContent="flex-end"
-          >
-            {type === "c" ? (
+      </flexboxLayout>
+    );
+    switch (type) {
+      case "c":
+        template = (
+          <flexboxLayout flexDirection="row" justifyContent="space-between">
+            <button
+              marginTop={10}
+              onTap={() => {
+                removeProduct();
+              }}
+              verticalAlignment="middle"
+              class="icomoon"
+              width={40}
+              text="&#xe9ac;"
+              style={styles.delete}
+            ></button>
+            <stackLayout>{addToCarttemplate}</stackLayout>
+          </flexboxLayout>
+        );
+        break;
+      case "p":
+        template = (
+          <stackLayout>
+            {qnte <= 0 ? (
               <>
                 <button
-                  onTap={() => {}}
-                  verticalAlignment="middle"
-                  class="icomoon"
-                  width={40}
-                  text="&#xe9ac;"
-                  style={styles.delete}
-                ></button>
+                  style={{ ...app_styles.btn, ...app_styles.btn_primary }}
+                  onTap={() => addItem()}
+                  isEnabled={qnte < product.stock}
+                  textWrap
+                >
+                  <formattedString>
+                    <span className="icomoon" text="&#xe905;"></span>
+                    <span fontWeight="500" text="\t Acheter"></span>
+                  </formattedString>
+                </button>
               </>
             ) : (
-              <></>
+              addToCarttemplate
             )}
-            <button
-              col={0}
-              style={styles.add}
-              className="btn icomoon"
-              onTap={() => removeItem()}
-              isEnabled={
-                (type !== "c" && qnte >= 1) || (type == "c" && qnte > 1)
-              }
-              backgroundColor={
-                type == "c" && qnte <= 1 ? colors.__disabled : colors.__primary
-              }
-            >
-              &#xea0b;
-            </button>
-            <textField isEnabled={false} col={1} style={styles.input}>
-              {qnte}
-            </textField>
-            <button
-              col={2}
-              style={styles.add}
-              className="btn icomoon"
-              onTap={() => addItem()}
-              isEnabled={product.stock > qnte}
-              backgroundColor={
-                product.stock <= qnte ? colors.__disabled : colors.__primary
-              }
-            >
-              &#xea0a;
-            </button>
-          </flexboxLayout>
-        )}
-      </stackLayout>
-    </flexboxLayout>
-  );
+          </stackLayout>
+        );
+    }
+    return template;
+  };
   return render();
 }
 

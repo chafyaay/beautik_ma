@@ -1,14 +1,11 @@
 import * as React from "react";
 import { RouteProp } from "@react-navigation/core";
-import { Dialogs } from "@nativescript/core";
 import { FrameNavigationProp } from "react-nativescript-navigation";
 import { StyleSheet } from "react-nativescript";
 import { MainStackParamList } from "./NavigationParamList";
-import { ProductListScreen } from "../pages/product-list";
 import NavBar from "../shared-ui/action-bar";
 import { PRODUCTS } from "../utils/data";
-import BottomSheetTest from "../shared-ui/modal";
-import { AppContext, ModalContext, NavBarContext } from "../utils/context";
+import { AppContext } from "../utils/context";
 import { Icart } from "../utils/props.interfaces";
 import { useEffect } from "react";
 import { getItem } from "../utils/storage";
@@ -44,13 +41,6 @@ export function HomeScreen({ route, navigation }: HomeScreenProps) {
     if (getItem("cart")) {
       setQnte(getQnte(getItem("cart")));
     }
-
-    //setCart(getItem("cart"));
-
-    /*     setAppProps({
-      ...appProps,
-      navBar: { show: true, navigation: navigation },
-    }); */
   });
   return (
     <frame>
@@ -64,7 +54,12 @@ export function HomeScreen({ route, navigation }: HomeScreenProps) {
               {PRODUCTS.map((product: any) => (
                 <AppCard
                   key={product.id}
-                  {...{ product: product, cardType: "p", qnte: qnte }}
+                  {...{
+                    navigation: navigation,
+                    product: product,
+                    cardType: "p",
+                    qnte: qnte,
+                  }}
                 ></AppCard>
               ))}
             </stackLayout>

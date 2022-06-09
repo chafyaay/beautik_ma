@@ -8,4 +8,6 @@ export type MainStackParamList = {
   LoginScreen: {};
   onPageLoaded: {};
   ShipementScreen: {};
+  OrderDetailsScreen: {};
+  ProductDetailsScreen: {};
 };

@@ -4,7 +4,7 @@ import { StyleSheet } from "react-nativescript";
 import { colors } from "../../utils/app_styles";
 
 function NavBar({ options }) {
-  const { navigation, qnte } = options;
+  const { navigation, qnte, goBack } = options;
   const [_qnte, setQnte] = useState(0);
   useEffect(() => {});
   return (
@@ -22,46 +22,66 @@ function NavBar({ options }) {
           });
         }}
       >
-        <button
-          marginLeft={20}
-          left={0}
-          top="0"
-          fontSize={30}
-          col={2}
-          text="&#xe903;"
-          className="icomoon"
-        ></button>
+        {!goBack ? (
+          <>
+            <button
+              marginLeft={20}
+              left={0}
+              top="0"
+              fontSize={30}
+              col={2}
+              text="&#xe903;"
+              className="icomoon"
+            ></button>
+          </>
+        ) : (
+          <>
+            <button
+              marginLeft={20}
+              left={0}
+              top="0"
+              fontSize={25}
+              col={2}
+              text="&#xe904;"
+              className="icomoon"
+              onTap={() => {
+                navigation.reset({ index: 1, routes: [{ name: "Home" }] });
+              }}
+            ></button>
+          </>
+        )}
       </stackLayout>
-      <gridLayout
-        rows="*"
-        style={STYLES.cartIcon}
-        onTap={() => {
-          navigation.reset({
-            index: 1,
-            routes: [{ name: "CartDetails" }],
-          });
-        }}
-      >
-        <label
-          textAlignment="center"
-          borderRadius="25"
-          width={25}
-          height="25"
-          marginTop={-35}
-          marginRight={-30}
-          backgroundColor={colors.__primary}
-          fontSize={15}
+      {!goBack && (
+        <gridLayout
+          rows="*"
+          style={STYLES.cartIcon}
+          onTap={() => {
+            navigation.reset({
+              index: 1,
+              routes: [{ name: "CartDetails" }],
+            });
+          }}
         >
-          {qnte}
-        </label>
-        <label
-          verticalAlignment="middle"
-          horizontalAlignment="center"
-          fontSize={30}
-          text="&#xe901;"
-          className="icomoon"
-        ></label>
-      </gridLayout>
+          <label
+            textAlignment="center"
+            borderRadius="25"
+            width={25}
+            height={25}
+            marginTop={-35}
+            marginRight={-30}
+            backgroundColor={colors.__primary}
+            fontSize={15}
+            text={qnte}
+          ></label>
+          <label
+            verticalAlignment="middle"
+            horizontalAlignment="center"
+            fontSize={30}
+            text="&#xe901;"
+            className="icomoon"
+          ></label>
+        </gridLayout>
+      )}
     </flexboxLayout>
   );
 }

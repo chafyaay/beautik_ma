@@ -21,7 +21,9 @@ import { WelcomeScreen } from "./WelcomScreen";
 import NavBar from "../shared-ui/action-bar";
 import BottomSheetTest, { TopSheetModal } from "../shared-ui/modal";
 import { TopSheetModalComponent } from "../shared-ui/modal/top-modal";
-import { ShipementScreen } from "../pages/shipement/shipement";
+import { ShipementScreen } from "../pages/order/shipement";
+import { OrderDetailsScreen } from "../pages/order/order-details";
+import { ProductDetailsScreen } from "../pages/product-details";
 
 const StackNavigator = stackNavigatorFactory();
 
@@ -47,7 +49,7 @@ export const mainStackNavigator = () => {
               <absoluteLayout row={1}>
                 <stackLayout left={0} top="0" width={"100%"} height="100%">
                   <StackNavigator.Navigator
-                    initialRouteName="ShipementScreen"
+                    initialRouteName="Welcome"
                     screenOptions={{
                       headerStyle: {
                         backgroundColor: "black",
@@ -84,14 +86,18 @@ export const mainStackNavigator = () => {
                       name="ShipementScreen"
                       component={ShipementScreen}
                     />
+                    <StackNavigator.Screen
+                      name="OrderDetailsScreen"
+                      component={OrderDetailsScreen}
+                    />
+                    <StackNavigator.Screen
+                      name="ProductDetailsScreen"
+                      component={ProductDetailsScreen}
+                    />
                   </StackNavigator.Navigator>
                 </stackLayout>
                 <>
-                  {notification.show ? (
-                    <TopSheetModal options={1}></TopSheetModal>
-                  ) : (
-                    <></>
-                  )}
+                  {notification.show ? <TopSheetModal></TopSheetModal> : <></>}
                 </>
               </absoluteLayout>
             </AppContext.Provider>
