@@ -2,157 +2,242 @@ import { RouteProp } from "@react-navigation/core";
 import * as React from "react";
 import { useState } from "react";
 import { FrameNavigationProp } from "react-nativescript-navigation";
-import { MainStackParamList } from "../../components/NavigationParamList";
-import { app_styles } from "../../utils/app_styles";
+import { MainStackParamList } from "../../xapp/_components/NavigationParamList";
+import { app_styles, colors } from "../../xapp/_utils/app_styles";
+import FormValidator, {
+  ErroMessageHandler,
+} from "../../xapp/_utils/form-validator";
+import User from "../../xapp/_utils/user";
 
 type RegisterScreenProps = {
   route: RouteProp<MainStackParamList, "RegisterScreen">;
   navigation: FrameNavigationProp<MainStackParamList, "RegisterScreen">;
 };
 
+let registerformControls = {
+  mobile: {
+    value: "",
+    label: "Numéro de Téléphone",
+    hint: "0666111111",
+    type: "text",
+    isValid: false,
+    touched: false,
+    max: 10,
+  },
+  email: {
+    value: "",
+    label: "Email",
+    hint: "email@company.com",
+    type: "text",
+    isValid: false,
+    touched: false,
+    max: 20,
+  },
+  name: {
+    value: "",
+    label: "Nom & Prénom",
+    hint: "Jean Smith",
+    type: "text",
+    isValid: false,
+    touched: false,
+    max: 30,
+  },
+  password: {
+    value: "",
+    label: "Mot de passe",
+    hint: "12AbE678",
+    type: "password",
+    isValid: false,
+    touched: false,
+    max: 16,
+  },
+  adress: {
+    value: "",
+    label: "Adresse",
+    hint: "text",
+    type: "textarea",
+    isValid: false,
+    touched: false,
+    max: 80,
+  },
+  isFormValid: false,
+};
+
 export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
-  const [showPassWord, SetShowPassWord] = useState(false);
-  const [validator, setValidator] = useState({});
+  const [registerForm, setRegisterForm] = useState({}) as any;
 
-  const onTextChange = (fcn: string, value: any) => {
-    let errors = {};
-    let msg = "";
-    let isvalid: boolean;
-    switch (fcn) {
-      case "email":
-      case "phone":
-        errors["required"] = !!value;
-        errors["minlen"] = value.length > 6;
-        errors["maxlen"] = value.length < 30;
-        const pattern = [
-          /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g,
-          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-        ];
-        const reg1 = new RegExp(pattern[0]);
-        const reg2 = new RegExp(pattern[1]);
-        const found = reg1.test(value) || reg2.test(value);
-        errors["pattern"] = found;
-        break;
-      case "nom":
-      case "prenom":
-        errors["required"] = !!value;
-        errors["minlen"] = value.length > 6;
-        errors["maxlen"] = value.length < 30;
-        errors["pattern"] = new RegExp(/^[\w-]*$/g).test(value);
-        break;
-      case "password":
-        errors["required"] = !!value;
-        errors["minlen"] = value.length >= 8;
-        errors["maxlen"] = value.length < 30;
+  React.useEffect(() => {
+    setRegisterForm(registerformControls);
+  }, []);
+  React.useEffect(() => {
+    createRegisterForm();
+  });
 
-        errors["pattern"] = new RegExp(
-          /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/g
-        ).test(value);
-        break;
+  const onTextChangeHandler = (input: any) => {
+    const REGISTER_FORM: any = { ...registerForm };
 
-      default:
-        break;
+    REGISTER_FORM[input.input].value = input._value;
+
+    REGISTER_FORM[input.input].isValid = FormValidator(
+      input.input,
+      input._value
+    ).isValid;
+
+    REGISTER_FORM[input.input].touched = input._value !== "";
+
+    let isFormValid = true;
+
+    for (let key in REGISTER_FORM) {
+      if (key !== "isFormValid")
+        isFormValid = isFormValid && REGISTER_FORM[key].isValid;
     }
-    setValidator({ fcn, ...errors });
+
+    REGISTER_FORM.isFormValid = isFormValid;
+
+    setRegisterForm(REGISTER_FORM);
+
+    console.log("--------------->>>");
+    console.log(registerForm);
+    console.log("--------------->>>");
   };
-  //--------------------------------------------//
+
+  const onSubmit = () => {
+    const user = new User();
+    const mobile = registerForm.mobile.value;
+    const email = registerForm.email.value;
+    const password = registerForm.password.value;
+    console.log({ mobile, email, password });
+
+    user.register({ mobile, email, password });
+  };
+
+  const inputTemplate = (input: any) => {
+    return (
+      <stackLayout style={app_styles.form_group}>
+        <label
+          className="form-label"
+          marginBottom={10}
+          text={input.label}
+        ></label>
+        {input.type === "text" || input.type === "password" ? (
+          <textField
+            onTextChange={($event) =>
+              onTextChangeHandler({ _value: $event.value, ...input })
+            }
+            maxLength={input.max}
+            style={app_styles.formControl}
+            secure={input.type === "password"}
+            hint={input.hint}
+          ></textField>
+        ) : input.type === "textarea" ? (
+          <textView
+            onTextChange={($event) =>
+              onTextChangeHandler({ _value: $event.value, ...input })
+            }
+            maxLength={input.max}
+            style={app_styles.formControl}
+            height={100}
+            hint={input.hint}
+          ></textView>
+        ) : (
+          <></>
+        )}
+
+        {input.touched && !input.isValid ? (
+          <label color={colors.___danger} textWrap marginTop={10}>
+            <formattedString>
+              <span
+                fontSize={14}
+                fontWeight="500"
+                text={ErroMessageHandler(input?.input).title}
+              ></span>
+              {ErroMessageHandler(input?.input).desc ? (
+                <span
+                  fontSize={13}
+                  text={"\n" + ErroMessageHandler(input?.input).desc}
+                ></span>
+              ) : (
+                <span></span>
+              )}
+            </formattedString>
+          </label>
+        ) : (
+          <></>
+        )}
+      </stackLayout>
+    );
+  };
+
+  const createRegisterForm = (): any[] => {
+    let form = [];
+    for (let input in registerForm) {
+      form.push({ input: input, ...registerForm[input] });
+    }
+    return form;
+  };
 
   return (
-    <gridLayout rows="*">
-      <scrollView row={0}>
-        <stackLayout padding={20}>
+    <>
+      <scrollView>
+        <gridLayout rows="auto,auto,*" padding={20}>
           <button
-            padding={20}
-            textAlignment="right"
             horizontalAlignment="right"
-            fontSize={30}
+            row={0}
+            onTap={() => {
+              navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+            }}
+            text="&#xe911;"
             className="icomoon"
-            text="&#xe902;"
-            onTap={() => navigation.navigate("Home")}
+            fontSize={18}
+            marginRight={20}
           ></button>
+          <stackLayout row={1}>
+            <label
+              text="Création un compte BEAUTIK.MA"
+              textWrap
+              style={{
+                textAlignment: "center",
+                fontWeight: "700",
+                fontSize: 25,
+                letterSpacing: 0.06,
+                marginBottom: 30,
+              }}
+            ></label>
 
-          <label className="form-label">Email/Numéro de Téléphone </label>
-
-          <textField
-            hint="password"
-            id="username"
-            secure={showPassWord}
-            style={app_styles.formControl}
-            className="form-control"
-            onTextChange={($event) => onTextChange("email", $event.value)}
-          ></textField>
-
-          <label className="form-label">Nom </label>
-          <textField
-            hint="password"
-            style={app_styles.formControl}
-            className="form-control"
-            onTextChange={($event) => onTextChange("nom", $event.value)}
-          ></textField>
-
-          <label className="form-label">Prénom </label>
-          <textField
-            hint="password"
-            style={app_styles.formControl}
-            className="form-control"
-            onTextChange={($event) => onTextChange("prenom", $event.value)}
-          ></textField>
-
-          <label className="form-label">Mot de passe </label>
-          <textField
-            hint="password"
-            className="form-control"
-            onTextChange={($event) => onTextChange("password", $event.value)}
-            style={app_styles.formControl}
-            borderColor={
-              validator
-                ? !validator["pattern"]
-                  ? colors.__primary
-                  : colors.__default
-                : colors.__default
-            }
-          ></textField>
-          <gridLayout columns="40,*" height={40}>
+            {createRegisterForm().map((input) => inputTemplate(input))}
+          </stackLayout>
+          <stackLayout row={2} padding={20}>
             <button
-              horizontalAlignment="left"
-              col={0}
-              onTap={() => SetShowPassWord(!showPassWord)}
-            >
-              <formattedString>
-                {showPassWord ? (
-                  <span
-                    fontSize={19}
-                    className="icomoon"
-                    text="&#xe9d1;"
-                  ></span>
-                ) : (
-                  <span
-                    fontSize={19}
-                    className="icomoon"
-                    text="&#xe9ce;"
-                  ></span>
-                )}
-              </formattedString>
-            </button>
-
-            <label class="text" col={1}>
-              Afficher le mot de passe
-            </label>
-          </gridLayout>
-
-          <label className="link" text="Mot de passe oublié"></label>
-          <button
-            className="btn"
-            text="Enregistrer"
-            onTap={() => true}
-          ></button>
-          <button
-            className="btn link"
-            text="Se Connecter"
-            onTap={() => navigation.navigate("LoginScreen")}
-          ></button>
-        </stackLayout>
+              style={
+                registerForm.isFormValid
+                  ? {
+                      ...app_styles.btn,
+                      ...app_styles.btn_primary,
+                      width: "100%",
+                    }
+                  : {
+                      ...app_styles.btn,
+                      ...app_styles.btn_disabled,
+                      width: "100%",
+                    }
+              }
+              onTap={() => onSubmit()}
+              text="Créer un compte"
+              isEnabled={registerForm.isFormValid}
+            ></button>
+            <button
+              style={{ ...app_styles.btn, ...app_styles.link, width: "100%" }}
+              text="Se Connecter"
+              onTap={() =>
+                navigation.reset({
+                  index: 1,
+                  routes: [{ name: "LoginScreen" }],
+                })
+              }
+            ></button>
+          </stackLayout>
+        </gridLayout>
       </scrollView>
-    </gridLayout>
+    </>
   );
 };

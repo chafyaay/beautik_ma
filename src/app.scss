@@ -24,13 +24,10 @@
   --lightGray: #F7F7F7,
  }
 
- .btn{
-   background: #F2C230;
- }
+
 
 * {
   font-family: "Montserrat", sans-serif;
-  color: #4e6189;
 }
 .text {
   font-family: "Montserrat", sans-serif;
@@ -61,6 +58,7 @@
 }
 .icomoon {
   font-family: "icomoon", "icomoon";
+  color: #4e6189;
 }
 .cart-container {
   border: 1;
@@ -70,15 +68,16 @@
 .link {
   color: blue;
 }
-.__btn {
+.btn {
   font-size: 20;
   margin-top: 20;
   border-radius: 3;
   width: 100%;
   padding: 10;
   color: white;
-  .primary{
-    background-color: #1e90ff;
+  background-color: #1e90ff;
+.primary{
+    background-color: 'red';
   }
   .link {
     background-color: transparent;
@@ -103,5 +102,19 @@
   font-weight: 500;
   .old {
     text-decoration: line-through;
+  }
+}
+
+.button-group{
+  background-color: #4e6189;
+  .button{
+    border-radius: 5;
+    .primary{
+      background-color: #1e90ff;
+
+    }
+    .default{
+      background-color: #4e6189;
+    }
   }
 }

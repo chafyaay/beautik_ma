@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { app_styles } from "../../xapp/_utils/app_styles";
 
-export const RatingStars = ({ data }) => {
+export const RatingStarsComponent = ({ rating, comments }) => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    setWidth((data.rating * 100) / 5);
+    setWidth((rating * 100) / 5);
   });
 
   return (
@@ -30,10 +29,8 @@ export const RatingStars = ({ data }) => {
           ></image>
         </absoluteLayout>
       </absoluteLayout>
-      <label style={app_styles.link} marginTop={10} textWrap>
-        {data?.comments?.length
-          ? data?.comments?.length + "Avis clients vérifiés"
-          : ""}{" "}
+      <label marginTop={10} textWrap>
+        {comments?.length ? comments?.length + "Avis clients vérifiés" : ""}{" "}
       </label>
     </>
   );

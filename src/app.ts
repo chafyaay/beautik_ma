@@ -11,9 +11,9 @@ purpose of the file is to pass control to the app’s first module.
 */
 
 import * as ReactNativeScript from "react-nativescript";
-import { mainStackNavigator as AppContainer } from "./app/components/Navigator";
+import { mainStackNavigator as appcontainer } from "./app/main/Navigator";
 
-ReactNativeScript.start(React.createElement(AppContainer, {}, null));
+ReactNativeScript.start(React.createElement(appcontainer, {}, null));
 
 /*
 Do not place any code after the application has been started as it will not
